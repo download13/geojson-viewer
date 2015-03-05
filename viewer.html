@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
+		<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet-src.js"></script>
+
+		<style>
+		#map {
+			height: 500px;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="map"></div>
+
+		<script>
+		var startLoc = L.latLng([38.5556, -121.4689]);
+
+		var map = L.map('map').setView(startLoc, 12);
+
+		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+		}).addTo(map);
+
+		var x = new XMLHttpRequest();
+		x.open('GET', 'ways.geojson', true);
+		x.send();
+		x.onload = function() {
+			var data = JSON.parse(x.responseText);
+			console.log(data.length + ' parks loaded in California dataset');
+
+			data.forEach(addItem);
+		};
+
+		function addItem(item) {
+			var geoJson = L.geoJson(item.shape);
+
+			map.addLayer(geoJson);
+		}
+		</script>
+	</body>
+</html>
